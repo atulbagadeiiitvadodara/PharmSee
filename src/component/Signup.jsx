@@ -1,6 +1,41 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import { Context } from "./Context";
+import axios from "axios";
 
 const Signup = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setlLastName] = useState("");
+  const [context, setContext] = useContext(Context);
+  const history = useHistory();
+
+  const handleSumbit = async () => {
+    var bodyFormData = new FormData();
+    bodyFormData.append("email", email);
+    bodyFormData.append("password", password);
+    bodyFormData.append("first_name", firstName);
+    bodyFormData.append("last_name", lastName);
+
+    await axios({
+      method: "post",
+      url: "https://pharmasee504.herokuapp.com/signup",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        if (response.data.status == "success") {
+          console.log(response.data);
+          history.push("/");
+          setContext(email);
+        }
+      })
+      .catch(function (error) {
+        console.log("login error", error);
+      });
+  };
+
   return (
     <>
       {/* <!-- Button trigger modal --> */}
@@ -45,12 +80,24 @@ const Signup = () => {
               <form>
                 <div className="mb-3">
                   <label htmlFor="exampleInput" className="form-label">
-                    Username
+                    First Name
                   </label>
                   <input
                     type="text"
                     className="form-control"
                     id="exampleInput"
+                    onBlur={(val) => setFirstName(val.target.value)}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="exampleInput" className="form-label">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="exampleInput"
+                    onBlur={(val) => setlLastName(val.target.value)}
                   />
                 </div>
                 <div className="mb-3">
@@ -62,6 +109,7 @@ const Signup = () => {
                     className="form-control"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
+                    onBlur={(val) => setEmail(val.target.value)}
                   />
                   <div id="emailHelp" className="form-text">
                     We'll never share your email with anyone else.
@@ -75,6 +123,7 @@ const Signup = () => {
                     type="password"
                     className="form-control"
                     id="exampleInputPassword1"
+                    onBlur={(val) => setPassword(val.target.value)}
                   />
                 </div>
                 <div className="mb-3 form-check">
@@ -88,7 +137,9 @@ const Signup = () => {
                   </label>
                 </div>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSumbit}
+                  data-bs-dismiss="modal"
                   className="btn btn-outline-primary w-100 mt-5"
                 >
                   Register

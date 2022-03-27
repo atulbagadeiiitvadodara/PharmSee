@@ -1,11 +1,31 @@
-import React from "react";
-import { NavLink } from "react-router-dom";
+import React, { useContext } from "react";
+import { NavLink, useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Context } from "./Context";
 import Login from "./Login";
 import Signup from "./Signup";
+import axios from "axios";
 
 export default function Navbar() {
   const state = useSelector((state) => state.handleCart);
+  const [context, setContext] = useContext(Context);
+  const history = useHistory();
+
+  const handleLogout = async () => {
+    await axios({
+      method: "post",
+      url: "https://pharmasee504.herokuapp.com/logout",
+    })
+      .then(function (response) {
+        if (response.data.status == "success") {
+          history.push("/");
+          setContext("");
+        } else console.log("error");
+      })
+      .catch(function (error) {
+        console.log("login error", error);
+      });
+  };
 
   return (
     <div>
@@ -48,9 +68,24 @@ export default function Navbar() {
                 </NavLink>
               </li>
             </ul>
+            {context != "" ? (
+              <p className="my-1">
+                <i class="fa fa-user"></i> {context}
+              </p>
+            ) : (
+              <span></span>
+            )}
             <div className="buttons">
-              <Login />
-              <Signup />
+              {context == "" && <Login />}
+              {context == "" && <Signup />}
+              {context != "" && (
+                <button
+                  className="btn btn-outline-dark ms-2"
+                  onClick={handleLogout}
+                >
+                  <i className="fa fa-sign-out me-1"></i>Logout
+                </button>
+              )}
               <NavLink to="/cart" className="btn btn-outline-dark ms-2">
                 <i className="fa fa-shopping-cart me-1"></i> Cart({state.length}
                 )

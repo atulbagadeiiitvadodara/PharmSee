@@ -20,7 +20,6 @@ export default function Product() {
       setLoading(true);
       const response = DATA.find((x) => x.id == id.id);
       setProduct(response);
-      console.log('res', response)
       setLoading(false);
     };
     getProduct();

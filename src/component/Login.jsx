@@ -1,6 +1,37 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { useHistory } from "react-router-dom";
+import { Context } from "./Context";
+import axios from "axios";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [context, setContext] = useContext(Context);
+  const history = useHistory();
+
+  const handleSumbit = async () => {
+    var bodyFormData = new FormData();
+    bodyFormData.append("email", email);
+    bodyFormData.append("password", password);
+
+    await axios({
+      method: "post",
+      url: "https://pharmasee504.herokuapp.com/login",
+      data: bodyFormData,
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+      .then(function (response) {
+        if (response.data.status == "success") {
+          history.push("/");
+          setContext(email);
+        } else console.log("error");
+        history.push("/error");
+      })
+      .catch(function (error) {
+        console.log("login error", error);
+      });
+  };
+
   return (
     <>
       {/* <!-- Button trigger modal --> */}
@@ -52,6 +83,7 @@ const Login = () => {
                     className="form-control"
                     id="exampleInputEmail1"
                     aria-describedby="emailHelp"
+                    onBlur={(val) => setEmail(val.target.value)}
                   />
                   <div id="emailHelp" className="form-text">
                     We'll never share your email with anyone else.
@@ -65,6 +97,7 @@ const Login = () => {
                     type="password"
                     className="form-control"
                     id="exampleInputPassword1"
+                    onBlur={(val) => setPassword(val.target.value)}
                   />
                 </div>
                 <div className="mb-3 form-check">
@@ -78,8 +111,10 @@ const Login = () => {
                   </label>
                 </div>
                 <button
-                  type="submit"
+                  type="button"
+                  onClick={handleSumbit}
                   className="btn btn-outline-primary w-100 mt-5"
+                  data-bs-dismiss="modal"
                 >
                   Sign In
                 </button>

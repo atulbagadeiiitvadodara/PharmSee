@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
 import DATA from "../Data";
 
 export default function Products() {
@@ -22,9 +23,28 @@ export default function Products() {
         componentMounted = false;
       };
     };
-    
+
     getProducts();
   }, []);
+
+  // useEffect(() => {
+  //   var bodyFormData = new FormData();
+  //   bodyFormData.append("email", "atulbagade@gmail.com");
+  //   bodyFormData.append("password", "churi");
+
+  //   axios({
+  //     method: "post",
+  //     url: "https://pharmasee504.herokuapp.com/login",
+  //     data: bodyFormData,
+  //     headers: { "Content-Type": "multipart/form-data" },
+  //   })
+  //     .then(function (response) {
+  //       console.log(response);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // }, []);
 
   const Loading = () => {
     return (
@@ -91,7 +111,9 @@ export default function Products() {
                   />
                   <div className="card-body">
                     <h5 className="card-title mb-0">{product.title}</h5>
-                    <p className="card-text lead fw-bold">&#8377; {product.price}</p>
+                    <p className="card-text lead fw-bold">
+                      &#8377; {product.price}
+                    </p>
                     <NavLink
                       to={`/products/${product.id}`}
                       className="btn btn-outline-dark"
